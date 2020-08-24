@@ -1,31 +1,81 @@
-var randomNumber = function(min, max) {
+var getPlayerName = function() {
+  var name = "";
+  
+  while (name === "" || name === null) {
+    name = prompt("What is your robot's name?");
+  }
+  return name;
+};
+
+var playerInfo = {
+  name: getPlayerName(),
+  health: 100,
+  attack: 10,
+  money: 10,
+  reset: function() {
+    this.health = 100;
+    this.money = 10;
+    this.attack = 10;
+  },
+  refillHealth: function() {
+    if (this.money >= 7) {
+      window.alert("Refilling player's health by 20 for 7 dollars.");
+      this.health += 20;
+      this.money -+ 7;
+    }
+    else {
+      window.alert("You don't have enough money!");
+    }
+  },
+  upgradeAttack: function() {
+    if (this.money >= 7) {
+      window.alert("Upgrading player's attack by 6 for 7 dollars.");
+      this.attack += 6;
+      this.money -= 7;
+    }
+    else {
+      window.alert("You don't have enough money!");
+    }
+  }
+};
+  var randomNumber = function(min, max) {
   var value = Math.floor(Math.random() * (max - min + 1));
 
   return value;
+};
+
+var fightOrSkip = function() {
+  // ask user if they'd like to fight or skip using  function
+  var promptFight = window.prompt('Would you like FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+
+  if (promptFight === "" || promptFight === null) {
+    window.alert("You need to provide a valid answer! Please try again.");
+    return fightOrSkip();
+  }
+  promptFight = promptFight.toLowerCase();
+   if (promptFight === "skip" || promptFight === "SKIP") {
+    // confirm user wants to skip
+    var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+
+    // if yes (true), leave fight
+    if (confirmSkip) {
+      window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
+      // subtract money from playerMoney for skipping
+      playerInfo.money = Math.max(0, playerInfo.money - 10);
+      shop();
+
+      return true;
+    }
+  }
 };
 
 //Fight 
 var fight = function(enemy) {
     while (playerInfo.health > 0 && enemy.health > 0) {
       // ask user if they'd liked to fight or run
-      var promptFight = window.prompt('Would you like FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
-  
-      // if user picks "skip" confirm and then stop the loop
-      if (promptFight === "skip" || promptFight === "SKIP") {
-        // confirm user wants to skip
-        var confirmSkip = window.confirm("Are you sure you'd like to quit?");
-  
-        // if yes (true), leave fight
-        if (confirmSkip) {
-          window.alert(playerInfo.Name + ' has decided to skip this fight. Goodbye!');
-          // subtract money from playerMoney for skipping
-          playerInfo.money = Math.max(0, playerInfo.money - 10);
-          console.log("playerMoney", playerInfo.money)
-          break;
-        }
-      }
-  
-      // remove enemy's health by subtracting the amount set in the playerAttack variable
+      fightOrSkip();
+
+  // remove enemy's health by subtracting the amount set in the playerAttack variable
       var damage = randomNumber(playerInfo.attack - 10, playerInfo.attack);
       enemy.health = Math.max(0, enemy.health - damage);
       console.log(playerInfo.name + ' attacked ' + enemy.name + '. ' + enemy.name + ' now has ' + enemy.health + ' health remaining.');
@@ -58,47 +108,6 @@ var fight = function(enemy) {
     }
   };
 
-  // function to set name
-var getPlayerName = function() {
-  var name = "";
-
-  while (name === "" || name === null) {
-    name = prompt("What is your robot's name?");
-  }
-};
-
-  var playerInfo = {
-    name: getPlayerName(),
-    health: 100,
-    attack: 10,
-    money: 10,
-    reset: function() {
-      this.health = 100;
-      this.money = 10;
-      this.attack = 10;
-    },
-    refillHealth: function() {
-      if (this.money >= 7) {
-        window.alert("Refilling player's health by 20 for 7 dollars.");
-        this.health += 20;
-        this.money -+ 7;
-      }
-      else {
-        window.alert("You don't have enough money!");
-      }
-    },
-    upgradeAttack: function() {
-      if (this.money >= 7) {
-        window.alert("Upgrading player's attack by 6 for 7 dollars.");
-        this.attack += 6;
-        this.money -= 7;
-      }
-      else {
-        window.alert("You don't have enough money!");
-      }
-    }
-  };
-  
   var enemyInfo = [
     {
       name: "Roborto",
@@ -135,12 +144,13 @@ var startGame = function() {
       } else {
         window.alert("Game Over!");
       break;
-    }
   }
+};
 
   //after loop ends, player is either out of health or enemies to fight, so run endGame function
   endGame();
 };
+
 
 //function to end entire game
 var endGame = function() {
@@ -163,22 +173,20 @@ var endGame = function() {
 
 var shop = function () {
   var shopOptionPrompt = window.prompt(
-    "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one: 'REFILL', 'UPGRADE', or 'LEAVE' to make a choice."
+    "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter 1 for REFILL, 2 for UPGRADE, or 3 for LEAVE."
   );
+
+  shopOptionPrompt = parseInt(shopOptionPrompt);
   
   switch (shopOptionPrompt) {
-    case "refill":
-    case "REFILL":
+    case 1:
       playerInfo.refillHealth();
       break;
-    case "upgrade":
-    case "UPsazFDSAsdfdsa QWE3P;'LQA  Za;/GRADE":
+    case 2:
       playerInfo.upgradeAttack();
       break;
-    case "leave":
-    case "LEAVE":
+    case 3:
       window.alert("Leaving the store.");
-
       break;
     default: 
       window.alert("You did not pick a valid option. Try again.");
@@ -187,4 +195,4 @@ var shop = function () {
   }
 };
 
-startGame();
+startGame()
